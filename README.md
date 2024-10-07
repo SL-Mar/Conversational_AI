@@ -139,9 +139,7 @@ Contact
 
 For any inquiries or support, please reach out:
 
-    Email: your.email@example.com
-    GitHub: yourusername
-    LinkedIn: Your LinkedIn
+    GitHub: SL-MAR
 
 Acknowledgments
 
