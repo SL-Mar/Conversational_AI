@@ -5,12 +5,17 @@
   "states": {
     "home_state": {
       "render": {
-        "text": "Trading Operator - v0 - 6 October 2024 - Welcome! What would you like to do?",
+        "text": "Trading Operator - v1 - 19 October 2024 - Welcome! What would you like to do?",
         "buttons": [
           {
             "content": "Analyze Quant Finance Article",
             "description": "Upload a PDF of a quant finance article for analysis.",
             "on_click": "upload_pdf_state"
+          },
+          {
+            "content": "Summarize General PDF",
+            "description": "Upload a PDF to extract text and provide a general summary.",
+            "on_click": "upload_pdf_general_summary_state"
           },
           {
             "content": "Generate Market View (News)",
@@ -31,71 +36,12 @@
       },
       "transitions": {
         "upload_pdf_state": "upload_pdf_state",
+        "upload_pdf_general_summary_state": "upload_pdf_general_summary_state",
         "generate_news_market_view_state": "generate_news_market_view_state",
         "generate_etf_market_view_state": "generate_etf_market_view_state",
         "research_google_scholar_state": "research_google_scholar_state"
       }
     },
-    
-    "research_google_scholar_state": {
-      "inputs": {
-        "num_results": {
-          "description": "The number of search results to return.",
-          "type": "integer",
-          "user_input": true
-        },
-        "query": {
-          "description": "Enter your search query for Google Scholar.",
-          "type": "text",
-          "user_input": true
-        }
-      },
-      "tasks": [
-        {
-          "module_config": {
-            "num_results": "{{num_results}}",
-            "query": "{{query}}",
-            "output_name": "raw_scholar_results",
-            "widget_id": "1781994348505960448"
-          },
-          "module_type": "AnyWidgetModule",
-          "name": "fetch_google_scholar_results"
-        },
-        {
-          "module_config": {
-            "widget_id": "1744214024104448199",
-            "user_prompt": {
-              "text": "{{raw_scholar_results}}"
-            },
-            "system_prompt": "You are an expert in formatting academic research data. Based on the raw Google Scholar search results below, generate a well-organized and readable summary that includes only the article title and link.\n\nHere are the search results: {{raw_scholar_results}}",
-            "output_name": "formatted_scholar_results"
-          },
-          "module_type": "AnyWidgetModule",
-          "name": "format_google_scholar_results"
-        }
-      ],
-      "outputs": {
-        "context.formatted_scholar_results": "{{formatted_scholar_results}}"
-      },
-      "render": {
-        "text": "Google Scholar Results for '{{query}}':\n\n{{formatted_scholar_results}}",
-        "buttons": [
-          {
-            "content": "Search Again",
-            "on_click": "research_google_scholar_state"
-          },
-          {
-            "content": "Return to Home",
-            "on_click": "home_state"
-          }
-        ]
-      },
-      "transitions": {
-        "research_google_scholar_state": "research_google_scholar_state",
-        "home_state": "home_state"
-      }
-    },
-    
     "upload_pdf_state": {
       "inputs": {
         "document": {
@@ -156,7 +102,60 @@
         "home_state": "home_state"
       }
     },
-    
+    "upload_pdf_general_summary_state": {
+      "inputs": {
+        "document": {
+          "description": "Upload a PDF for general summarization",
+          "type": "text_file",
+          "user_input": true
+        }
+      },
+      "tasks": [
+        {
+          "name": "extract_text_from_pdf",
+          "module_type": "AnyWidgetModule",
+          "module_config": {
+            "widget_id": "1798203300706521088",
+            "document": "{{document}}",
+            "output_name": "extracted_text"
+          }
+        },
+        {
+          "name": "generate_general_summary",
+          "module_type": "AnyWidgetModule",
+          "module_config": {
+            "widget_id": "1744214024104448199",
+            "user_prompt": {
+              "text": "{{extracted_text}}"
+            },
+            "system_prompt": "You are an expert summarizer with a talent for distilling complex documents into clear, concise, and informative summaries. Your task is to read the following text and produce a summary that captures the main ideas, key arguments, and essential details. Please ensure that your summary:\n\n- Is written in your own words, avoiding direct quotations unless necessary.\n- Is concise yet comprehensive, covering all major points without unnecessary details.\n- Is organized logically, reflecting the structure of the original document.\n- Uses clear and accessible language suitable for a general audience.\n- Highlights any significant findings, conclusions, or recommendations.\n- Excludes personal opinions or interpretations beyond the content provided.\n\nHere is the text: {{extracted_text}}",
+            "output_name": "general_summary"
+          }
+        }
+      ],
+      "outputs": {
+        "context.general_summary": "{{general_summary}}"
+      },
+      "render": {
+        "text": "{{general_summary}}",
+        "buttons": [
+          {
+            "content": "Summarize Another PDF",
+            "description": "Upload another PDF to summarize.",
+            "on_click": "upload_pdf_general_summary_state"
+          },
+          {
+            "content": "Return to Home",
+            "description": "Go back to the main menu.",
+            "on_click": "home_state"
+          }
+        ]
+      },
+      "transitions": {
+        "upload_pdf_general_summary_state": "upload_pdf_general_summary_state",
+        "home_state": "home_state"
+      }
+    },
     "generate_code_state": {
       "inputs": {
         "summary": {
@@ -208,7 +207,6 @@
         "home_state": "home_state"
       }
     },
-    
     "validate_code_prompt_state": {
       "render": {
         "text": "Do you want to validate the generated code?",
@@ -230,7 +228,6 @@
         "input_error_state": "input_error_state"
       }
     },
-    
     "post_validation_state": {
       "render": {
         "text": "Great! Your code has been validated successfully.",
@@ -252,7 +249,6 @@
         "home_state": "home_state"
       }
     },
-    
     "input_error_state": {
       "inputs": {
         "compilation_error": {
@@ -298,7 +294,6 @@
         "home_state": "home_state"
       }
     },
-    
     "validate_corrected_code_state": {
       "render": {
         "text": "Do you want to validate the corrected code?",
@@ -320,7 +315,6 @@
         "input_error_state": "input_error_state"
       }
     },
-    
     "post_validation_corrected_state": {
       "render": {
         "text": "Great! Your corrected code has been validated successfully.",
@@ -342,7 +336,6 @@
         "home_state": "home_state"
       }
     },
-    
     "generate_news_market_view_state": {
       "tasks": [
         {
@@ -390,7 +383,6 @@
         "home_state": "home_state"
       }
     },
-    
     "generate_etf_market_view_state": {
       "tasks": [
         {
@@ -435,6 +427,64 @@
       },
       "transitions": {
         "generate_etf_market_view_state": "generate_etf_market_view_state",
+        "home_state": "home_state"
+      }
+    },
+    "research_google_scholar_state": {
+      "inputs": {
+        "num_results": {
+          "description": "The number of search results to return.",
+          "type": "integer",
+          "user_input": true
+        },
+        "query": {
+          "description": "Enter your search query for Google Scholar.",
+          "type": "text",
+          "user_input": true
+        }
+      },
+      "tasks": [
+        {
+          "module_config": {
+            "num_results": "{{num_results}}",
+            "query": "{{query}}",
+            "output_name": "raw_scholar_results",
+            "widget_id": "1781994348505960448"
+          },
+          "module_type": "AnyWidgetModule",
+          "name": "fetch_google_scholar_results"
+        },
+        {
+          "module_config": {
+            "widget_id": "1744214024104448199",
+            "user_prompt": {
+              "text": "{{raw_scholar_results}}"
+            },
+            "system_prompt": "You are an expert in formatting academic research data. Based on the raw Google Scholar search results below, generate a well-organized and readable summary that includes only the article title and link.\n\nHere are the search results: {{raw_scholar_results}}",
+            "output_name": "formatted_scholar_results"
+          },
+          "module_type": "AnyWidgetModule",
+          "name": "format_google_scholar_results"
+        }
+      ],
+      "outputs": {
+        "context.formatted_scholar_results": "{{formatted_scholar_results}}"
+      },
+      "render": {
+        "text": "Google Scholar Results for '{{query}}':\n\n{{formatted_scholar_results}}",
+        "buttons": [
+          {
+            "content": "Search Again",
+            "on_click": "research_google_scholar_state"
+          },
+          {
+            "content": "Return to Home",
+            "on_click": "home_state"
+          }
+        ]
+      },
+      "transitions": {
+        "research_google_scholar_state": "research_google_scholar_state",
         "home_state": "home_state"
       }
     }
