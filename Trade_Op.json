@@ -68,7 +68,7 @@
             "user_prompt": {
               "text": "{{extracted_text}}"
             },
-            "system_prompt": "You are an expert quantitative researcher and algorithmic trader. Analyze the following text to extract the core components needed for implementing a QuantConnect trading strategy. Focus on:\n\n1. The trading strategy logic, including the alpha signals, buy/sell triggers, and performance metrics.\n2. Detailed risk management methods, including stop losses, maximum drawdowns, and volatility measures.\n3. Portfolio construction and rebalancing rules, including position sizing and asset allocation techniques.\n4. Any additional trading insights such as sentiment analysis or event-driven signals.\n\nProvide a detailed breakdown of these components so that a quant developer can directly implement them in Python within the QuantConnect platform.\n\nHere is the text: {{extracted_text}}.",
+            "system_prompt": "You act as a seasoned quantitative researcher instructing the development team. Using the following article, describe the alpha signal and other relevant trading insights to the attention of a quantitative developer in charge of implementing a succesfull Python algorithm on QuantConnect. Focus on:\n\n1. The trading strategy logic, including the alpha signals, buy/sell triggers, and performance metrics.\n2. Detailed risk management methods, including stop losses, maximum drawdowns, and volatility measures.\n3. Portfolio construction and rebalancing rules, including position sizing and asset allocation techniques.\n4. \n\nProvide a detailed breakdown of these components.\n\nHere is the text: {{extracted_text}}.",
             "output_name": "summary"
           }
         }
@@ -173,7 +173,7 @@
             "user_prompt": {
               "text": "{{summary}}"
             },
-            "system_prompt": "You are an expert in Python and the QuantConnect algorithmic trading framework. Based on the insights provided in the summary below, generate the full Python code for a QuantConnect trading algorithm. Ensure that the code follows these guidelines:\n\n1. Strategy Logic: Implement the alpha signals, buy/sell triggers, and any performance metrics mentioned.\n2. Risk Management: Integrate robust risk management rules, including volatility management, stop losses, and position liquidation.\n3. Portfolio Construction: Implement asset allocation and rebalancing rules, with clear position sizing, taking into account transaction costs.\n4. Execution Logic: Ensure trading settings are efficient and scalable, including handling data fetching, order execution, and latency management.\n\nMake sure the code is:\n- Modular and organized with helper functions for maintainability.\n- Annotated with clear comments explaining each section.\n- Optimized for performance in a live trading environment.\n- Ready to deploy directly on QuantConnect with minimal adjustments.\n\nHere is the researcher’s summary: {{summary}}",
+            "system_prompt": "You are an expert Python developer on QuantConnect. Based on the insights provided in the summary below, generate the full Python code for a QuantConnect trading algorithm. Ensure that the code follows these guidelines:\n\n1. Strategy Logic: Focus on desiging robust alphamodel.\n2. Risk Management: Integrate robust risk management rules, using built-in or custom risk management models. \n3. Portfolio Construction: Implement asset allocation and rebalancing rules, with clear position sizing, taking into account transaction costs.\n4. Execution Logic: use preferably built-in execution model.\n\nMake sure the code is:\n- Follows as close as possible the QuantConnect framework, is modular and organized with helper functions for maintainability.\n- Annotated with clear comments explaining each section.\n- Includes debug statement when relevant.\n- Ready to deploy directly on QuantConnect with minimal adjustments.\n\nHere is the researcher’s summary: {{summary}}",
             "output_name": "generated_code"
           }
         }
@@ -266,7 +266,7 @@
             "user_prompt": {
               "text": "The following is the Python code generated for a QuantConnect trading algorithm:\n\n{{generated_code}}\n\nI attempted to compile/run it but encountered the following error:\n{{compilation_error}}\n\nPlease analyze the error and provide a corrected version of the code that resolves the issue. Ensure that the corrected code maintains all original functionalities and adheres to best practices."
             },
-            "system_prompt": "You are an expert Python developer with extensive knowledge of the QuantConnect algorithmic trading framework. Given the provided code and the compilation error, analyze the issue and generate a corrected version of the code that resolves the error while maintaining all the original functionalities and adhering to best practices.",
+            "system_prompt": "You are an expert Python developer on QuantConnect. Given the provided code and the compilation error, analyze the issue and generate a corrected version of the code that resolves the error while maintaining all the original functionalities and adhering to best practices.",
             "output_name": "corrected_code"
           }
         }
@@ -490,3 +490,4 @@
     }
   }
 }
+
