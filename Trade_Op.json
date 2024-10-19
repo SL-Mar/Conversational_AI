@@ -68,8 +68,9 @@
             "user_prompt": {
               "text": "{{extracted_text}}"
             },
-            "system_prompt": "You act as a seasoned quantitative researcher instructing the development team. Using the following article, describe the alpha signal and other relevant trading insights to the attention of a quantitative developer in charge of implementing a succesfull Python algorithm on QuantConnect. Focus on:\n\n1. The trading strategy logic, including the alpha signals, buy/sell triggers, and performance metrics.\n2. Detailed risk management methods, including stop losses, maximum drawdowns, and volatility measures.\n3. Portfolio construction and rebalancing rules, including position sizing and asset allocation techniques.\n4. \n\nProvide a detailed breakdown of these components.\n\nHere is the text: {{extracted_text}}.",
-            "output_name": "summary"
+            "system_prompt": "You act as a seasoned quantitative researcher instructing the development team. Using the following article, describe the alpha signal and other relevant trading insights to the attention of a quantitative developer in charge of implementing a successful Python algorithm on QuantConnect. Focus on:\n\n1. The trading strategy logic, including the alpha signals, buy/sell triggers, and performance metrics.\n2. Detailed risk management methods, including stop losses, maximum drawdowns, and volatility measures.\n3. Portfolio construction and rebalancing rules, including position sizing and asset allocation techniques.\n\nProvide a detailed breakdown of these components.\n\nHere is the text: {{extracted_text}}.",
+            "output_name": "summary",
+            "max_tokens": 8192
           }
         }
       ],
@@ -129,7 +130,8 @@
               "text": "{{extracted_text}}"
             },
             "system_prompt": "You are an expert summarizer with a talent for distilling complex documents into clear, concise, and informative summaries. Your task is to read the following text and produce a summary that captures the main ideas, key arguments, and essential details. Please ensure that your summary:\n\n- Is written in your own words, avoiding direct quotations unless necessary.\n- Is concise yet comprehensive, covering all major points without unnecessary details.\n- Is organized logically, reflecting the structure of the original document.\n- Uses clear and accessible language suitable for a general audience.\n- Highlights any significant findings, conclusions, or recommendations.\n- Excludes personal opinions or interpretations beyond the content provided.\n\nHere is the text: {{extracted_text}}",
-            "output_name": "general_summary"
+            "output_name": "general_summary",
+            "max_tokens": 16384
           }
         }
       ],
@@ -161,7 +163,8 @@
         "summary": {
           "description": "Insights from PDF summary",
           "type": "text",
-          "user_input": false
+          "user_input": false,
+          "value": "{{context.summary}}"
         }
       },
       "tasks": [
@@ -173,8 +176,9 @@
             "user_prompt": {
               "text": "{{summary}}"
             },
-            "system_prompt": "You are an expert Python developer on QuantConnect. Based on the insights provided in the summary below, generate the full Python code for a QuantConnect trading algorithm. Ensure that the code follows these guidelines:\n\n1. Strategy Logic: Focus on desiging robust alphamodel.\n2. Risk Management: Integrate robust risk management rules, using built-in or custom risk management models. \n3. Portfolio Construction: Implement asset allocation and rebalancing rules, with clear position sizing, taking into account transaction costs.\n4. Execution Logic: use preferably built-in execution model.\n\nMake sure the code is:\n- Follows as close as possible the QuantConnect framework, is modular and organized with helper functions for maintainability.\n- Annotated with clear comments explaining each section.\n- Includes debug statement when relevant.\n- Ready to deploy directly on QuantConnect with minimal adjustments.\n\nHere is the researcher’s summary: {{summary}}",
-            "output_name": "generated_code"
+            "system_prompt": "You are an expert Python developer on QuantConnect. Based on the insights provided in the summary below, generate the full Python code for a QuantConnect trading algorithm. Ensure that the code follows these guidelines:\n\n1. Strategy Logic: Focus on designing a robust alpha model.\n2. Risk Management: Integrate robust risk management rules, using built-in or custom risk management models.\n3. Portfolio Construction: Implement asset allocation and rebalancing rules, with clear position sizing, taking into account transaction costs.\n4. Execution Logic: Use preferably built-in execution models.\n\nMake sure the code:\n- Follows as closely as possible the QuantConnect framework, is modular and organized with helper functions for maintainability.\n- Is annotated with clear comments explaining each section.\n- Includes debug statements when relevant.\n- Is ready to deploy directly on QuantConnect with minimal adjustments.\n\nHere is the researcher's summary: {{summary}}",
+            "output_name": "generated_code",
+            "max_tokens": 4096
           }
         }
       ],
@@ -255,6 +259,12 @@
           "description": "Please enter the compilation error you encountered.",
           "type": "text",
           "user_input": true
+        },
+        "generated_code": {
+          "description": "Generated code from the previous step",
+          "type": "text",
+          "user_input": false,
+          "value": "{{context.generated_code}}"
         }
       },
       "tasks": [
@@ -264,10 +274,11 @@
           "module_config": {
             "widget_id": "1744214024104448199",
             "user_prompt": {
-              "text": "The following is the Python code generated for a QuantConnect trading algorithm:\n\n{{generated_code}}\n\nI attempted to compile/run it but encountered the following error:\n{{compilation_error}}\n\nPlease analyze the error and provide a corrected version of the code that resolves the issue. Ensure that the corrected code maintains all original functionalities and adheres to best practices."
+              "text": "Below is the Python code generated for a QuantConnect trading algorithm:\n\n```python\n{{generated_code}}\n```\n\nI attempted to compile/run it but encountered the following error:\n\n```\n{{compilation_error}}\n```\n\nPlease analyze the error in relation to the provided code and suggest corrections to fix the issue. **Make only the minimal necessary changes to the code to resolve the error, while keeping the rest of the code intact. Do not alter the overall structure or logic of the code.** Provide the corrected code with the changes highlighted, and include explanations for the changes if necessary."
             },
-            "system_prompt": "You are an expert Python developer on QuantConnect. Given the provided code and the compilation error, analyze the issue and generate a corrected version of the code that resolves the error while maintaining all the original functionalities and adhering to best practices.",
-            "output_name": "corrected_code"
+            "system_prompt": "You are an expert Python developer on QuantConnect. Given the provided code and the compilation error, your task is to analyze the issue and provide a corrected version of the code that resolves the error. **Do not rewrite the entire code or change the trading strategy logic. Only make the necessary corrections to fix the error, maintaining all original functionalities and adhering to best practices.**",
+            "output_name": "corrected_code",
+            "max_tokens": 4096
           }
         }
       ],
@@ -445,16 +456,18 @@
       },
       "tasks": [
         {
+          "name": "fetch_google_scholar_results",
+          "module_type": "AnyWidgetModule",
           "module_config": {
+            "widget_id": "1781994348505960448",
             "num_results": "{{num_results}}",
             "query": "{{query}}",
-            "output_name": "raw_scholar_results",
-            "widget_id": "1781994348505960448"
-          },
-          "module_type": "AnyWidgetModule",
-          "name": "fetch_google_scholar_results"
+            "output_name": "raw_scholar_results"
+          }
         },
         {
+          "name": "format_google_scholar_results",
+          "module_type": "AnyWidgetModule",
           "module_config": {
             "widget_id": "1744214024104448199",
             "user_prompt": {
@@ -462,9 +475,7 @@
             },
             "system_prompt": "You are an expert in formatting academic research data. Based on the raw Google Scholar search results below, generate a well-organized and readable summary that includes only the article title and link.\n\nHere are the search results: {{raw_scholar_results}}",
             "output_name": "formatted_scholar_results"
-          },
-          "module_type": "AnyWidgetModule",
-          "name": "format_google_scholar_results"
+          }
         }
       ],
       "outputs": {
@@ -490,4 +501,3 @@
     }
   }
 }
-
